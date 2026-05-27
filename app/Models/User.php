@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role', // Menambahkan role ke fillable agar bisa diisi saat pembuatan user
+        'last_login_at', // Menambahkan last_login_at ke fillable jika ingin diisi secara manual
     ];
 
     /**

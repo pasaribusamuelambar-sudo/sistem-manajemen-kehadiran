@@ -82,7 +82,25 @@
                     <input type="checkbox" id="remember" class="w-5 h-5 text-indigo-600 border-slate-300 rounded-lg focus:ring-indigo-500 cursor-pointer">
                     <label for="remember" class="text-sm text-slate-500 font-medium cursor-pointer">Ingat perangkat ini</label>
                 </div>
-
+                <!-- Input Pilihan Role -->
+<div>
+    <label class="block text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 ml-1">Daftar Sebagai</label>
+    <div class="relative group">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 group-focus-within:text-indigo-600 transition-colors">
+            <i data-lucide="users" class="w-5 h-5"></i>
+        </span>
+        <select name="role" required
+            class="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:outline-none transition-all font-semibold appearance-none cursor-pointer">
+            <option value="" disabled selected>Pilih Role Anda</option>
+            <option value="karyawan">Karyawan (Staff)</option>
+            <option value="admin">Admin (HR)</option>
+        </select>
+        <!-- Icon panah kustom untuk select -->
+        <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
+            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+        </span>
+    </div>
+</div>
                 <button type="submit" 
                     class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 rounded-2xl transition-all duration-300 shadow-xl shadow-indigo-200 transform active:scale-[0.98]">
                     Masuk Sekarang
@@ -91,7 +109,8 @@
             
             <p class="text-center mt-10 text-sm text-slate-500 font-medium">
                 Belum punya akun? 
-                <a href="{{ route('register') }}" class="text-indigo-600 font-extrabold hover:underline transition-all">Daftar Admin</a>
+                <a href="{{ route('register') }}" class="text-indigo-600 font-extrabold hover:underline transition-all">Daftar Admin(Hr)</a>
+                <a href="{{ route('register') }}" class="text-indigo-600 font-extrabold hover:underline transition-all">Daftar Karyawan(staff)</a>
             </p>
         </div>
     </div>

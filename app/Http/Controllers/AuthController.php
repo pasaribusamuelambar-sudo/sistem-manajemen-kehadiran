@@ -9,10 +9,12 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    // Menampilkan halaman Register
     public function showRegister() {
-        return view('register'); 
+        return view('auths.register'); 
     }
 
+    // Proses Simpan Data Register
     public function register(Request $request) {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -28,13 +30,15 @@ class AuthController extends Controller
             'role' => $request->role,
         ]);
 
-        return redirect('/login')->with('success', 'Registrasi berhasil!');
+        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan masuk.');
     }
 
+    // Menampilkan halaman Login
     public function showLogin() {
-        return view('login'); 
+        return view('auths.login'); 
     }
 
+    // Proses Login
     public function login(Request $request) {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
@@ -43,18 +47,27 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('dashboard');
+
+            // BAGIAN DATABASE YANG ERROR SUDAH SAYA HAPUS TOTAL
+            // Sekarang fokus ke redirect (Front-End)
+            $user = Auth::user();
+            
+            if ($user->role === 'admin') {
+                return redirect()->route('home_admin');
+            }
+            
+            return redirect()->route('home_karyawan');
         }
 
         return back()->withErrors(['email' => 'Email atau password salah.']);
     }
 
+    // Proses Logout
     public function logout(Request $request) {
-    Auth::logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-    // Ubah redirect ini
-    return redirect('/success-logout'); 
-}
+        return redirect('/login')->with('success', 'Berhasil keluar sistem.'); 
+    }
 }

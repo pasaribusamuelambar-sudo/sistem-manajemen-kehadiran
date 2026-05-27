@@ -2,64 +2,75 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\Storage;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes - PresensiHub
-|--------------------------------------------------------------------------
-*/
-
-// 1. HALAMAN LANDING (Welcome)
+// 1. LANDING PAGE
 Route::get('/', function () {
-    return view('welcome');
+    return view('auths.welcome');
 })->name('welcome');
 
-
-// 2. FITUR LOGIN
-// Menampilkan Halaman Login
-Route::get('/login', function () {
-    return view('login');
-})->name('login');
-
-// Memproses Data Login
+// 2. AUTHENTICATION
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', function (Request $request) {
-    $email = $request->input('email');
-    
-    // Logika sederhana: Jika email mengandung kata 'admin', masuk ke Home Admin
-    if (str_contains($email, 'admin')) {
-        return redirect()->route('home1'); 
-    } else {
-        return redirect()->route('home1');
-    }
+    $role = $request->input('role');
+    return ($role == 'admin') ? redirect()->route('home_admin') : redirect()->route('home_karyawan');
 })->name('login.post');
 
-
-// 3. FITUR REGISTER
-// Menampilkan Halaman Register
 Route::get('/register', function () {
-    return view('register');
+    return view('auths.register');
 })->name('register');
 
-// Memproses Data Register
-Route::post('/register', function (Request $request) {
-    $role = $request->input('role');
-    
-    if ($role == 'admin') {
-        return redirect()->route('home1');
-    } else {
-        return redirect()->route('home');
+Route::post('/register', [AuthController::class, 'processRegister'])->name('register.post');
+
+// 3. DASHBOARD ADMIN
+Route::get('/admin/dashboard', [HomeController::class, 'home_admin'])->name('home_admin');
+
+// 4. DASHBOARD KARYAWAN
+Route::get('/karyawan/dashboard', function () {
+    return view('auths.home_karyawan', ['page' => 'dashboard']);
+})->name('home_karyawan');
+
+// 5. FITUR LOGOUT
+Route::post('/logout', function (Request $request) {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect()->route('welcome'); 
+})->name('logout');
+
+// 6. FITUR IZIN
+Route::post('/izin/proses', function (Request $request) {
+    $request->validate([
+        'jenis_izin' => 'required',
+        'tgl_mulai'  => 'required|date',
+        'tgl_selesai' => 'required|date',
+        'alasan'      => 'required',
+        'surat'       => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+    ]);
+
+    if ($request->hasFile('surat')) {
+        $file = $request->file('surat');
+        $nama_file = time() . "_" . $file->getClientOriginalName();
+        $file->storeAs('public/uploads/izin', $nama_file);
     }
-})->name('register.post');
 
+    return redirect()->back()->with('success', 'Pengajuan izin berhasil dikirim!');
+})->name('izin.auths');
 
-// 4. HALAMAN DASHBOARD / HOME
-// Home Khusus Admin (Memanggil file home1.blade.php)
-Route::get('/home-admin', function () {
-    return view('home1');
-})->name('home1');
+// 7. PAGES (ABOUT & CONTACT)
+Route::get('/about', function () {
+    return view('auths.about');
+})->name('about');
 
-// Home Khusus Karyawan
-Route::get('/home1', function () {
-    // Pastikan kamu punya file home.blade.php atau ganti teks ini
-    return "Selamat Datang di Halaman Karyawan"; 
-})->name('home1');
+// Menggunakan nama rute 'contact' agar konsisten dengan pemanggilan route()
+Route::get('/contact', function () {
+    return view('auths.contact');
+})->name('contact');
+
+// KODE TAMBAHAN UNTUK PRAKTIKUM POIN 4 & 5
+Route::get('/user/{id}', function ($id) {
+    return 'User dengan ID ' . $id;
+});

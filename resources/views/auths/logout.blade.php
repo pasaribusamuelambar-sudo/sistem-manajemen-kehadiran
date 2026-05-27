@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,11 +24,11 @@
 
         <h1 class="text-2xl font-bold text-gray-900 mb-2">Anda Telah Keluar</h1>
         <p class="text-gray-500 leading-relaxed mb-8">
-            Terima kasih telah menggunakan **Sistem Manajemen Kehadiran**. Sesi Anda telah diakhiri dengan aman untuk menjaga privasi data.
+            Terima kasih telah menggunakan **PresensiHub**. Sesi Anda telah diakhiri dengan aman untuk menjaga privasi data.
         </p>
 
         <div class="space-y-4">
-            <a href="/login" 
+            <a href="{{ route('login') }}" 
                class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition duration-300 shadow-lg shadow-blue-200 transform active:scale-[0.98]">
                 Masuk Kembali
             </a>
