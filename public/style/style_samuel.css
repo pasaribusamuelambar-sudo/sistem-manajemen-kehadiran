@@ -1,0 +1,67 @@
+/* public/style/style_samuel.css */
+
+/* Custom Typography & Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+.pbl-hero-gedung {
+    background-image: url('../Img/Gedung.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.pbl-hero-tech {
+    background-image: url('../Img/Technopreneur-Polibatam-1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.pbl-avatar-samuel {
+    background-image: url('../Img/Admin 1 Samuel Pasaribu.jpeg');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.pbl-avatar-aditya {
+    background-image: url('../Img/Admin 2 Aditya Rizki Kurniawan.jpeg');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.pbl-avatar-farhan {
+    background-image: url('../Img/Admin 3 Muhammad Hoirul Farhan.jpeg');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* KREASI EFEK PREMIUM UNTUK HALAMAN PBL */
+.pbl-glass-nav {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.pbl-premium-card {
+    background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+    border: 1px solid rgba(51, 65, 85, 0.5);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.pbl-team-badge {
+    background: linear-gradient(90deg, #4f46e5 0%, #2563eb 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+}
+
+.pbl-hover-glow:hover {
+    box-shadow: 0 0 25px rgba(99, 102, 241, 0.2);
+    transform: translateY(-6px);
+    transition: all 0.3s ease-in-out;
+}

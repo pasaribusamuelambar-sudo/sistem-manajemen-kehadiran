@@ -2,23 +2,26 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Karyawan extends Model
 {
-    // Tambahkan ini agar Controller bisa membaca 'absensis' dan 'pengajuanIzins'
-    public function absensis()
-    {
-        return $this->hasMany(Absensi::class, 'karyawan_id');
-    }
+    use HasFactory;
 
-    public function pengajuanIzins()
-    {
-        return $this->hasMany(PengajuanIzin::class, 'karyawan_id');
-    }
+    // Menentukan nama tabel secara eksplisit
+    protected $table = 'karyawans';
 
-    public function divisi()
-    {
-        return $this->belongsTo(Divisi::class, 'divisi_id');
-    }
+    // Kolom-kolom yang boleh diisi secara massal
+    protected $fillable = [
+        'id_kerja',
+        'name',
+        'email',
+        'password',
+        'real_password',
+        'no_hp',
+        'divisi',
+        'role',
+        'status'
+    ];
 }

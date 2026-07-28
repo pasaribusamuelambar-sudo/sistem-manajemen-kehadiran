@@ -3,145 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengajuan Izin | PresensiHub</title>
+    <title>Pengajuan Izin & Cuti Karyawan</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        
-        /* Mengunci area tengah agar scroll mandiri tanpa merusak komponen layout luar */
-        .content-viewport-isolated {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            height: calc(100vh - 110px); /* Menyesuaikan batas tinggi agar tidak menabrak header luar */
-            overflow-y: auto;             /* Guliran diisolasi hanya terjadi di dalam kontainer ini */
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
-
-        /* Desain kustom scrollbar modern yang tipis */
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        
-        /* Penstabil lapisan rendering agar elemen form tetap kokoh saat di-scroll */
-        .render-stable {
-            transform: translateZ(0);
-            -webkit-transform: translateZ(0);
-        }
-    </style>
+    <!-- Font Awesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body class="bg-slate-50 font-sans text-slate-800 antialiased p-4 sm:p-8">
 
-<div class="content-viewport-isolated custom-scrollbar">
-    <div class="p-4 md:p-8 max-w-4xl mx-auto w-full pb-16 render-stable">
-        
-        {{-- Notifikasi Sukses --}}
-        @if(session('success'))
-        <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-[24px] flex items-center space-x-3 shadow-sm">
-            <i data-lucide="check-circle" class="w-5 h-5"></i>
-            <span class="font-bold text-sm">{{ session('success') }}</span>
-        </div>
-        @endif
-
-        {{-- Notifikasi Error Umum --}}
-        @if($errors->any())
-        <div class="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-[24px] flex flex-col space-y-1 shadow-sm">
-            <div class="flex items-center space-x-3">
-                <i data-lucide="alert-circle" class="w-5 h-5"></i>
-                <span class="font-bold text-sm">Terjadi kesalahan:</span>
+    <div class="max-w-6xl mx-auto space-y-6 pb-16">
+        <!-- HEADER -->
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-black tracking-tight text-slate-800 italic">Pengajuan Izin & Cuti Karyawan</h1>
+                <p class="text-xs text-slate-500 font-semibold mt-0.5">Isi formulir di bawah untuk mengajukan permohonan izin atau sakit secara resmi.</p>
             </div>
-            <ul class="list-disc list-inside text-xs ml-8">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+            <a href="{{ url('/karyawan/dashboard') }}" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold px-4 py-2 rounded-xl transition inline-flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Kembali ke Dashboard</span>
+            </a>
+        </div>
+
+        <!-- NOTIFIKASI SUKSES -->
+        @if(session('success'))
+        <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl p-4 flex items-center justify-between text-xs font-semibold shadow-sm">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-circle-check text-emerald-500 text-base"></i>
+                <span>{{ session('success') }}</span>
+            </div>
+            <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-800">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
         @endif
 
-        <div class="bg-white rounded-[40px] shadow-sm border border-slate-100 overflow-hidden">
-            <div class="p-8 md:p-12">
-                <div class="flex justify-between items-start mb-12">
-                    <div class="flex items-center space-x-5">
-                        <div class="bg-indigo-600 p-4 rounded-[22px] shadow-lg shadow-indigo-100">
-                            <i data-lucide="file-plus-2" class="text-white w-7 h-7"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-3xl font-black text-slate-900 tracking-tight leading-tight">Pengajuan Izin</h2>
-                            <p class="text-slate-400 text-sm font-semibold mt-1 italic uppercase tracking-wider">PT Arthur Teknik Indoprima</p>
-                        </div>
+        <!-- FORM INPUT PENGAJUAN -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm">
+            <form action="{{ route('izin.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                @csrf
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1.5">Jenis Permohonan <span class="text-rose-500">*</span></label>
+                        <select name="jenis_izin" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-semibold text-slate-700 outline-none focus:border-indigo-600 focus:bg-white transition" required>
+                            <option value="">-- Pilih Jenis Izin --</option>
+                            <option value="Cuti Sakit">Cuti Sakit</option>
+                            <option value="Izin Urusan Keluarga">Izin Urusan Keluarga</option>
+                            <option value="Cuti Tahunan">Cuti Tahunan</option>
+                            <option value="Izin Keperluan Mendesak">Izin Keperluan Mendesak</option>
+                        </select>
                     </div>
-                    {{-- Tombol Tutup/Kembali --}}
-                    <a href="{{ route('home_karyawan') }}" class="p-3 bg-slate-50 text-slate-400 hover:text-rose-500 rounded-2xl transition-all">
-                        <i data-lucide="x" class="w-6 h-6"></i>
-                    </a>
+
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1.5">Mulai Tanggal <span class="text-rose-500">*</span></label>
+                        <input type="date" name="mulai" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-semibold text-slate-700 outline-none focus:border-indigo-600 focus:bg-white transition" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1.5">Sampai Tanggal <span class="text-rose-500">*</span></label>
+                        <input type="date" name="selesai" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-semibold text-slate-700 outline-none focus:border-indigo-600 focus:bg-white transition" required>
+                    </div>
                 </div>
 
-                <form action="{{ route('izin.auths') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
-                    @csrf
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <div class="space-y-3">
-                            <label class="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Kategori Izin</label>
-                            <select name="jenis_izin" required class="w-full px-6 py-4.5 bg-slate-50 border border-slate-200 rounded-2xl focus:border-indigo-500 outline-none font-bold text-slate-700 @error('jenis_izin') border-rose-500 @enderror">
-                                <option value="" disabled selected>Pilih Kategori</option>
-                                <option value="sakit">Sakit (Lampirkan Surat Dokter)</option>
-                                <option value="umum">Izin Umum</option>
-                                <option value="cuti_tahunan">Cuti Tahunan</option>
-                            </select>
-                        </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1.5">Alasan Permohonan <span class="text-rose-500">*</span></label>
+                    <textarea name="alasan" rows="3" placeholder="Jelaskan alasan permohonan izin kamu secara singkat dan jelas..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-semibold text-slate-700 outline-none focus:border-indigo-600 focus:bg-white transition" required></textarea>
+                </div>
 
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="space-y-3">
-                                <label class="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Dari</label>
-                                <input type="date" name="tgl_mulai" value="{{ old('tgl_mulai') }}" required class="w-full px-4 py-4.5 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-700 @error('tgl_mulai') border-rose-500 @enderror">
-                            </div>
-                            <div class="space-y-3">
-                                <label class="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Sampai</label>
-                                <input type="date" name="tgl_selesai" value="{{ old('tgl_selesai') }}" required class="w-full px-4 py-4.5 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-700 @error('tgl_selesai') border-rose-500 @enderror">
-                            </div>
-                        </div>
-                    </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1.5">Unggah Surat Dokter / Bukti (PDF/Gambar Max 2MB)</label>
+                    <input type="file" name="bukti_dokumen" accept=".jpg,.jpeg,.png,.pdf" class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition cursor-pointer">
+                </div>
 
-                    <div class="space-y-3">
-                        <label class="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Alasan Detail</label>
-                        <textarea name="alasan" rows="4" required class="w-full px-6 py-5 bg-slate-50 border border-slate-200 rounded-[24px] outline-none font-medium text-slate-700 @error('alasan') border-rose-500 @enderror">{{ old('alasan') }}</textarea>
-                    </div>
-
-                    <div class="space-y-3">
-                        <label class="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Lampiran Bukti (Opsional)</label>
-                        <div class="relative">
-                            <input type="file" name="surat" id="surat" class="hidden">
-                            <label for="surat" class="flex flex-col items-center justify-center w-full h-32 px-6 border-2 border-dashed border-slate-200 rounded-[24px] bg-slate-50/50 cursor-pointer hover:bg-slate-50 transition-all">
-                                <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 mb-2"></i>
-                                <span id="file-name" class="text-sm font-bold text-slate-500">Klik untuk upload dokumen (PDF/JPG)</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="w-full bg-indigo-600 text-white py-6 rounded-[24px] font-black shadow-xl hover:bg-indigo-700 transition-all transform hover:-translate-y-1 active:scale-95">
-                        KIRIM PENGAJUAN
+                <div class="pt-2">
+                    <button type="submit" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-xl text-xs transition shadow-lg shadow-indigo-100 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Kirim Pengajuan Izin</span>
                     </button>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
 
+        <!-- TABEL RIWAYAT PENGAJUAN -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+            <div class="p-4 border-b border-slate-100">
+                <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Riwayat Pengajuan Permohonan Kamu</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[700px]">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-100 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                            <th class="p-4">Jenis Permohonan</th>
+                            <th class="p-4">Masa Izin</th>
+                            <th class="p-4">Alasan</th>
+                            <th class="p-4">Status Otorisasi</th>
+                            <th class="p-4">Catatan Admin</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-xs text-slate-600">
+                        @forelse($izinData ?? [] as $item)
+                        <tr class="hover:bg-slate-50/40 transition">
+                            <td class="p-4 font-bold text-slate-800">{{ $item->jenis_izin }}</td>
+                            <td class="p-4 font-medium text-slate-500">
+                                <div>{{ $item->mulai }}</div>
+                                <div class="text-[10px] text-slate-400">s/d {{ $item->selesai }}</div>
+                            </td>
+                            <td class="p-4 max-w-xs truncate" title="{{ $item->alasan }}">{{ $item->alasan }}</td>
+                            <td class="p-4">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold 
+                                    {{ $item->status == 'Disetujui' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : '' }}
+                                    {{ $item->status == 'Ditolak' ? 'bg-rose-50 text-rose-700 border border-rose-200' : '' }}
+                                    {{ $item->status == 'Pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' : '' }}">
+                                    {{ $item->status }}
+                                </span>
+                            </td>
+                            <td class="p-4 italic text-slate-400">
+                                {{ $item->catatan_admin ?? 'Belum ada tanggapan' }}
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="p-8 text-center text-slate-400 font-medium">Belum ada riwayat permohonan izin yang dikirim.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-</div>
 
-<script>
-    // Preview Nama File Saat Selesai Memilih Dokumen
-    document.getElementById('surat').onchange = function () {
-        if(this.files.length > 0) {
-            document.getElementById('file-name').innerHTML = this.files[0].name;
-        }
-    };
-    
-    // Inisialisasi Rendering Ikon Lucide Icons
-    if (window.lucide) {
-        lucide.createIcons();
-    }
-</script>
 </body>
 </html>

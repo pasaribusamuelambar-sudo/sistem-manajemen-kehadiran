@@ -9,6 +9,7 @@
         overflow-x: hidden;
         padding-right: 4px;           /* Ruang aman untuk scrollbar */
         scroll-behavior: smooth;
+        background-color: #f8fafc;    /* Background abu-abu sangat muda sesuai gambar */
     }
 
     /* Kustomisasi scrollbar agar terlihat modern dan tipis */
@@ -44,74 +45,143 @@
 </style>
 
 <div class="dashboard-viewport-wrapper">
-    <div class="space-y-8 p-2 pb-12">
+    <div class="space-y-6 p-6 pb-12">
         
-        <div class="hardware-render-fix bg-indigo-600 p-10 rounded-[40px] shadow-2xl shadow-indigo-200 flex flex-col md:flex-row justify-between items-center gap-8 text-white relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
-            <div class="relative z-10">
-                <h1 class="text-4xl font-black tracking-tight mb-2">Pusat Kontrol Real-time</h1>
-                <p class="text-indigo-100 font-medium">Monitoring kehadiran karyawan secara akurat hari ini.</p>
-            </div>
-            <div class="bg-white/20 p-6 rounded-[32px] backdrop-blur-xl border border-white/30 text-center min-w-[180px] relative z-10">
-                <p class="text-[10px] font-black uppercase tracking-[0.2em] mb-1">Total Karyawan</p>
-                <p class="text-4xl font-black italic">{{ $stats['total_karyawan'] ?? '156' }}</p>
-            </div>
+        <div class="space-y-1">
+            <h1 class="text-xl font-bold text-slate-800">Dashboard Admin</h1>
+            <p id="current-date" class="text-sm text-slate-500 font-medium">Memuat tanggal...</p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="hardware-render-fix bg-white p-8 rounded-[35px] border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-3">Hadir Tepat Waktu</p>
-                <h3 class="text-4xl font-black text-emerald-500 italic">{{ $stats['hadir'] ?? '120' }}</h3>
-            </div>
-            <div class="hardware-render-fix bg-white p-8 rounded-[35px] border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-3">Terlambat</p>
-                <h3 class="text-4xl font-black text-rose-500 italic">10</h3>
-            </div>
-            <div class="hardware-render-fix bg-white p-8 rounded-[35px] border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-3">Izin/Cuti</p>
-                <h3 class="text-4xl font-black text-amber-500 italic">5</h3>
-            </div>
-            <div class="hardware-render-fix bg-white p-8 rounded-[35px] border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-3">Belum Absen</p>
-                <h3 class="text-4xl font-black text-slate-300 italic">21</h3>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div class="hardware-render-fix lg:col-span-8 bg-white p-10 rounded-[40px] border border-slate-100 shadow-sm">
-                <div class="flex items-center justify-between mb-8">
-                    <h2 class="font-black text-slate-800 flex items-center gap-3 italic">
-                        <i data-lucide="bar-chart-3" class="text-indigo-600 w-6 h-6"></i> Statistik Mingguan
-                    </h2>
-                    <button onclick="downloadChart('weeklyChart')" class="p-3 bg-slate-50 hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 rounded-2xl transition-all border border-slate-100 shadow-sm flex items-center gap-2 font-bold text-[10px] uppercase tracking-widest">
-                        <i data-lucide="download" class="w-4 h-4"></i> Export PNG
-                    </button>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-start">
+                <div class="space-y-2">
+                    <p class="text-slate-500 text-sm font-medium">Total Karyawan</p>
+                    <h3 class="text-4xl font-bold text-slate-900 tracking-tight">{{ $stats['total_karyawan'] ?? '6' }}</h3>
+                    <p class="text-xs text-slate-400">6 terdaftar</p>
                 </div>
-                <div class="relative h-[300px]">
-                    <canvas id="weeklyChart"></canvas>
+                <div class="p-3 bg-blue-600 text-white rounded-xl shadow-md shadow-blue-100">
+                    <i data-lucide="users" class="w-6 h-6"></i>
                 </div>
             </div>
 
-            <div class="hardware-render-fix lg:col-span-4 bg-white p-10 rounded-[40px] border border-slate-100 shadow-sm">
-                <h2 class="font-black text-slate-800 mb-8 italic text-lg">Antrean Izin</h2>
-                <div class="space-y-4">
-                    <div class="p-6 bg-slate-50 rounded-[30px] border border-slate-100">
-                        <p class="font-black text-slate-900 mb-1">Budi Santoso</p>
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 italic">Sakit • 2 Hari</p>
-                        <div class="flex gap-2">
-                            <button class="flex-1 py-3 bg-indigo-600 text-white text-[10px] font-black rounded-2xl uppercase tracking-widest shadow-lg shadow-indigo-100">Setuju</button>
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-start">
+                <div class="space-y-2">
+                    <p class="text-slate-500 text-sm font-medium">Hadir Hari Ini</p>
+                    <h3 class="text-4xl font-bold text-slate-900 tracking-tight">{{ $stats['hadir'] ?? '0' }}</h3>
+                    <p class="text-xs text-slate-400">dari 6 karyawan</p>
+                </div>
+                <div class="p-3 bg-emerald-500 text-white rounded-xl shadow-md shadow-emerald-100">
+                    <i data-lucide="user-check" class="w-6 h-6"></i>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-start">
+                <div class="space-y-2">
+                    <p class="text-slate-500 text-sm font-medium">Terlambat</p>
+                    <h3 class="text-4xl font-bold text-slate-900 tracking-tight">0</h3>
+                    <p class="text-xs text-slate-400">hari ini</p>
+                </div>
+                <div class="p-3 bg-amber-500 text-white rounded-xl shadow-md shadow-amber-100">
+                    <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-start">
+                <div class="space-y-2">
+                    <p class="text-slate-500 text-sm font-medium">Alpha</p>
+                    <h3 class="text-4xl font-bold text-slate-900 tracking-tight">0</h3>
+                    <p class="text-xs text-slate-400">tidak hadir</p>
+                </div>
+                <div class="p-3 bg-rose-500 text-white rounded-xl shadow-md shadow-rose-100">
+                    <i data-lucide="user-x" class="w-6 h-6"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col min-h-[350px]">
+                <h2 class="font-bold text-slate-800 text-base flex items-center gap-2 mb-6">
+                    <i data-lucide="clock" class="text-blue-600 w-5 h-5"></i> Absensi Hari Ini
+                </h2>
+                <div class="flex-1 flex items-center justify-center">
+                    <p class="text-slate-400 font-medium text-sm">Belum ada absensi hari ini</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col min-h-[350px]">
+                <h2 class="font-bold text-slate-800 text-base flex items-center gap-2 mb-4">
+                    <i data-lucide="file-text" class="text-blue-600 w-5 h-5"></i> Pengajuan Izin Terbaru
+                </h2>
+                
+                <div class="divide-y divide-slate-100 flex-1">
+                    <div class="py-3.5 flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold text-slate-800 text-sm">Samuel Ambar Pasaribu</p>
+                            <p class="text-xs text-slate-400 mt-0.5">cuti game · 26 May - 27 May</p>
                         </div>
+                        <span class="px-3 py-1 bg-amber-50 text-amber-600 text-xs font-semibold rounded-full border border-amber-200/50">
+                            menunggu
+                        </span>
+                    </div>
+
+                    <div class="py-3.5 flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold text-slate-800 text-sm">Ahmad Fauzi</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Cuti Sakit · 26 May - 27 May</p>
+                        </div>
+                        <span class="px-3 py-1 bg-amber-50 text-amber-600 text-xs font-semibold rounded-full border border-amber-200/50">
+                            menunggu
+                        </span>
+                    </div>
+
+                    <div class="py-3.5 flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold text-slate-800 text-sm">Dewi Lestari</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Cuti Tahunan · 27 May - 29 May</p>
+                        </div>
+                        <span class="px-3 py-1 bg-emerald-50 text-emerald-600 text-xs font-semibold rounded-full border border-emerald-200/50">
+                            disetujui
+                        </span>
+                    </div>
+
+                    <div class="py-3.5 flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold text-slate-800 text-sm">Rina Wulandari</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Cuti Sakit · 25 May - 26 May</p>
+                        </div>
+                        <span class="px-3 py-1 bg-emerald-50 text-emerald-600 text-xs font-semibold rounded-full border border-emerald-200/50">
+                            disetujui
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="hardware-render-fix bg-white p-10 rounded-[40px] border border-slate-100 shadow-sm">
-            <h2 class="font-black text-slate-800 mb-8 flex items-center gap-3 italic">
-                <i data-lucide="map-pin" class="text-rose-500 w-6 h-6"></i> Tracking Jangkauan (Politeknik Negeri Batam)
-            </h2>
-            <div class="map-container-isolated">
-                <div id="map" class="rounded-3xl border border-slate-100"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="hardware-render-fix lg:col-span-8 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                <h2 class="font-bold text-slate-800 text-base mb-4 flex items-center gap-2">
+                    <i data-lucide="map-pin" class="text-rose-500 w-5 h-5"></i> Tracking Jangkauan (Politeknik Negeri Batam)
+                </h2>
+                <div class="map-container-isolated">
+                    <div id="map" class="rounded-xl border border-slate-100"></div>
+                </div>
+            </div>
+
+            <div class="hardware-render-fix lg:col-span-4 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                            <i data-lucide="bar-chart-3" class="text-blue-600 w-5 h-5"></i> Statistik Mingguan
+                        </h2>
+                        <button onclick="downloadChart('weeklyChart')" class="p-1.5 bg-slate-50 hover:bg-blue-50 text-slate-400 hover:text-blue-600 rounded-lg transition-all border border-slate-100">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <div class="relative h-[250px] w-full">
+                        <canvas id="weeklyChart"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -121,7 +191,33 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         
-        // 1. Chart Statistik
+        // --- FITUR UPDATE TANGGAL OTOMATIS ---
+        function updateDashboardDate() {
+            const dateElement = document.getElementById('current-date');
+            if (dateElement) {
+                const now = new Date();
+                
+                // Opsi penanggalan bahasa Indonesia lengkap (Hari, Tanggal Bulan Tahun)
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                
+                // Format tanggal menggunakan locale ID (Indonesia)
+                const formattedDate = now.toLocaleDateString('id-ID', options);
+                
+                // Ubah teks DOM secara realtime
+                dateElement.textContent = formattedDate;
+            }
+        }
+        
+        // Jalankan fungsi sesaat setelah dashboard dimuat
+        updateDashboardDate();
+
+
+        // 1. Chart Statistik Mingguan
         const ctx = document.getElementById('weeklyChart');
         if(ctx) {
             new Chart(ctx, {
@@ -130,15 +226,22 @@
                     labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum'],
                     datasets: [{
                         label: 'Hadir',
-                        data: [140, 135, 145, 130, 148],
-                        backgroundColor: '#4f46e5',
-                        borderRadius: 12
+                        data: [6, 5, 6, 4, 6],
+                        backgroundColor: '#2563eb',
+                        borderRadius: 6,
+                        barThickness: 20
                     }]
                 },
                 options: { 
                     responsive: true, 
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } } 
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 }
+                        }
+                    }
                 }
             });
         }
@@ -148,35 +251,34 @@
         if(mapDiv) {
             const polyBatam = [1.1186, 104.0484];
             
-            // scrollWheelZoom dimatikan agar scroll halaman tidak tersendat saat kursor mengenai area peta
             var map = L.map('map', {
                 scrollWheelZoom: false 
-            }).setView(polyBatam, 15);
+            }).setView(polyBatam, 13);
             
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
 
-            // Marker Pusat
+            // Marker Kantor Pusat
             L.marker(polyBatam).addTo(map)
                 .bindPopup('<b>Kantor Pusat: Polibatam</b>')
                 .openPopup();
 
             // Radius 5KM
             L.circle(polyBatam, {
-                color: '#4f46e5',
-                fillColor: '#4f46e5',
+                color: '#2563eb',
+                fillColor: '#2563eb',
                 fillOpacity: 0.1,
                 radius: 5000 
             }).addTo(map).bindPopup('Jangkauan Absensi (5KM)');
 
-            // Memaksa kalkulasi ulang dimensi peta agar layernya tidak pecah/geser
+            // Mengatasi bug layer pecah saat dirender di dalam kontainer flex/scroll
             setTimeout(() => {
                 map.invalidateSize();
             }, 300);
         }
         
-        // Refresh Icons lucide
+        // Inisialisasi ulang icon Lucide agar berjalan lancar
         if (window.lucide) lucide.createIcons();
     });
 </script>
