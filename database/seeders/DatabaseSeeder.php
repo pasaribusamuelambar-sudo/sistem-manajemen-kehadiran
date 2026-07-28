@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +13,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Memasukkan akun Admin Utama ke dalam sistem database secara otomatis
+        User::updateOrCreate(
+            ['email' => 'pasaribusamuelambar@gmail.com'], // Mencegah duplikasi data
+            [
+                'id_kerja'      => 'ADM-001',
+                'name'          => 'Samuel Pasaribu',
+                'divisi'        => 'IT Core / Administrator',
+                'no_hp'         => '081234567890',
+                'password'      => Hash::make('12345678'), // Enkripsi keamanan login Laravel
+                'real_password' => '12345678',             // Teks asli pantauan database
+                'role'          => 'admin_super',          // Hak akses tertinggi untuk mengelola karyawan
+                'status'        => 'Aktif',
+            ]
+        );
     }
 }

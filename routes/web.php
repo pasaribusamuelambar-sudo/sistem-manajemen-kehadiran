@@ -2,75 +2,65 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\DashboardKaryawanController; 
+use App\Http\Controllers\KaryawanController;
+use App\Http\Controllers\KaryawanProfilController;
+use App\Http\Controllers\IzinController; 
+use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\KaryawandivisiController;
 
 // 1. LANDING PAGE
-Route::get('/', function () {
-    return view('auths.welcome');
-})->name('welcome');
+Route::get('/', function () { return view('auths.welcome'); })->name('welcome');
+Route::get('/about', function () { return view('auths.about'); })->name('about');
+Route::get('/contact', function () { return view('auths.contact'); })->name('contact');
 
-// 2. AUTHENTICATION
+// 2. AUTENTIKASI SISTEM (LOGIN & REGISTER)
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', function (Request $request) {
-    $role = $request->input('role');
-    return ($role == 'admin') ? redirect()->route('home_admin') : redirect()->route('home_karyawan');
-})->name('login.post');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/register', function () {
-    return view('auths.register');
-})->name('register');
-
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'processRegister'])->name('register.post');
 
-// 3. DASHBOARD ADMIN
-Route::get('/admin/dashboard', [HomeController::class, 'home_admin'])->name('home_admin');
-
-// 4. DASHBOARD KARYAWAN
-Route::get('/karyawan/dashboard', function () {
-    return view('auths.home_karyawan', ['page' => 'dashboard']);
-})->name('home_karyawan');
-
-// 5. FITUR LOGOUT
-Route::post('/logout', function (Request $request) {
-    Auth::logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-    return redirect()->route('welcome'); 
-})->name('logout');
-
-// 6. FITUR IZIN
-Route::post('/izin/proses', function (Request $request) {
-    $request->validate([
-        'jenis_izin' => 'required',
-        'tgl_mulai'  => 'required|date',
-        'tgl_selesai' => 'required|date',
-        'alasan'      => 'required',
-        'surat'       => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-    ]);
-
-    if ($request->hasFile('surat')) {
-        $file = $request->file('surat');
-        $nama_file = time() . "_" . $file->getClientOriginalName();
-        $file->storeAs('public/uploads/izin', $nama_file);
-    }
-
-    return redirect()->back()->with('success', 'Pengajuan izin berhasil dikirim!');
-})->name('izin.auths');
-
-// 7. PAGES (ABOUT & CONTACT)
-Route::get('/about', function () {
-    return view('auths.about');
-})->name('about');
-
-// Menggunakan nama rute 'contact' agar konsisten dengan pemanggilan route()
-Route::get('/contact', function () {
-    return view('auths.contact');
-})->name('contact');
-
-// KODE TAMBAHAN UNTUK PRAKTIKUM POIN 4 & 5
-Route::get('/user/{id}', function ($id) {
-    return 'User dengan ID ' . $id;
+// 3. DASHBOARD MANAGEMENT ADMIN (PROTECTED WITH AUTH)
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    // Rute Utama & Monitoring Admin
+    Route::get('/dashboard', [HomeController::class, 'home_admin'])->name('home_admin');
+    Route::get('/monitoring', function() { return view('auths.monitoring', ['data' => collect([])]); })->name('admin.monitoring');
+    
+    // Kelola Surat Izin Admin (Mengakses Database via IzinController)
+    Route::get('/kelola-izin', [IzinController::class, 'index'])->name('admin.kelola_izin');
+    Route::patch('/kelola-izin/{id}/status', [IzinController::class, 'updateStatus'])->name('izin.update-status');
+    
+    // CRUD Karyawan
+    Route::post('/karyawan/store', [KaryawandivisiController::class, 'store'])->name('admin.karyawan.store');
+    Route::put('/karyawan/update/{id}', [KaryawandivisiController::class, 'update'])->name('admin.karyawan.update');
+    Route::delete('/karyawan/delete/{id}', [KaryawandivisiController::class, 'destroy'])->name('admin.karyawan.delete');
 });
+
+// 4. DASHBOARD KARYAWAN SYSTEM (PROTECTED WITH AUTH)
+Route::middleware(['auth'])->prefix('karyawan')->group(function () {
+    Route::get('/dashboard', [DashboardKaryawanController::class, 'index'])->name('home_karyawan');
+    Route::get('/monitoring', [DashboardKaryawanController::class, 'index'])->name('karyawan.monitoring');
+    
+    // Halaman Izin Karyawan
+    Route::get('/izin', [IzinController::class, 'karyawanIndex'])->name('karyawan.izin'); 
+    
+    Route::get('/profil', [KaryawanProfilController::class, 'tampilkan'])->name('karyawan.profil');
+    Route::post('/absen/proses', [KaryawanController::class, 'prosesAbsen'])->name('karyawan.absen.proses');
+    Route::post('/absen/proses-auths', [KaryawanController::class, 'prosesAbsen'])->name('karyawan.absen.auths'); 
+    Route::post('/absensi/store', [AbsensiController::class, 'store'])->name('absensi.store');
+    
+    Route::post('/profil/update', [KaryawanProfilController::class, 'updateProfil'])->name('karyawan.profil.update');
+    Route::post('/profil/sandi', [KaryawanProfilController::class, 'updateSandi'])->name('karyawan.profil.sandi');
+});
+
+// 5. BACKEND PROCESSORS (GLOBAL ACTIONS)
+Route::post('/izin/proses', [IzinController::class, 'store'])->name('izin.store'); 
+Route::post('/izin/proses-auths', [IzinController::class, 'store'])->name('izin.auths'); 
+Route::post('/presensi/store', [AbsensiController::class, 'store'])->name('presensi.store');
+Route::post('/lembur/proses', function (Request $request) {
+    return redirect()->to('/karyawan/dashboard?page=lembur')->with('success', 'Pengajuan lembur berhasil dikirim!');
+})->name('lembur.auths');
